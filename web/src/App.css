@@ -1,12 +1,26 @@
+*{
+  padding: 0;
+  margin: 0;
+}
 .home-page{
-  width: 100vw;
-  height: 100vh;
-
+  background-color: #326690;
   display: flex;
-  flex-direction: column;
-
   align-items: center;
-  justify-content: center;
-
   font-family: 'Roboto', sans-serif;
+  
+}
+
+.selections{
+  width: 50%;
+  display: flex;
+  flex-direction: flex-start;
+  justify-content: center;
+  
+}
+
+.checkboxes{
+  width: 50%;
+  display: flex;
+  flex-direction: flex-end;
+  justify-content: center;
 }

@@ -5,6 +5,10 @@ const routes = express.Router();
 const dbController = new DbController();
 
 //Here are the routes that can be accessed
-routes.get('/select', dbController.dbSearch);
+routes.get('/', dbController.dbSearch);
+routes.get('/ligas', dbController.getAllLeagues);
+routes.get('/times', dbController.getAllTeams);
+routes.get('/jogadores', dbController.getAllPlayers);
+routes.get('/jogos', dbController.getAllGames);
 
 export default routes;

@@ -1,13 +1,22 @@
 import knex from 'knex';
+import dotenv from 'dotenv'
 import path from 'path';
+
+dotenv.config()
+dotenv.config({path: path.resolve})
 
 //Config to connect to the database
 const db = knex({
     client: 'pg',
+    version: '7.2',
     connection: {
-        filename: path.resolve(__dirname, 'database.sqlite'),
+      host : process.env.DB_HOST,
+      //@ts-ignore
+      port : Number.parseInt(process.env.DB_PORT),
+      user : process.env.DB_USER,
+      password : process.env.DB_PASSWORD,
+      database : process.env.DB_NAME
     },
-    useNullAsDefault: true,
 });
 
 export default db;

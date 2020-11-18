@@ -13,6 +13,7 @@ export default class DbController{
 
     async getAllData(request: Request, response: Response){
         let {liga,time,jogador,jogo} = request.query;
+        //@ts-ignore
         let allLeagues,allTeams,allPlayers,allGames;
         
         // http://localhost:3333/all?liga=Todas%20as%20ligas&time=Todos%20os%20times
@@ -41,9 +42,23 @@ export default class DbController{
                     .where('time_visitante','=',allTeams[0].id_time)
                     .orWhere('time_casa','=',allTeams[0].id_time);
             }else{
-                allPlayers = await db('player').select('*')
+                allPlayers = []
+                for(let team of allTeams){
+                    const id = team.id_time
+                    //@ts-ignore
+                    allPlayers = allPlayers.concat(await db('player').select('*')
+                        .where('id_time', '=', id as string))
+                }
 
-                allGames = await db('game').select('*');
+                allGames = []
+                for(let team of allTeams){
+                    const id = team.id_time
+                    //@ts-ignore
+                    allGames = allGames.concat(await db('game').select('*')
+                        .where('time_visitante','=',id)
+                        .orWhere('time_casa','=',id));
+                }
+                
             }
         }else{
             allTeams = await db('team').select('*');
@@ -66,10 +81,13 @@ export default class DbController{
         for(let i in allTeams){
             allTeams[i] = allTeams[i].nome_time
         }
+        console.log(allPlayers)
         for(let i in allPlayers){
+            //@ts-ignore
             allPlayers[i] = allPlayers[i].nome_jogador
         }
         for(let i in allGames){
+            //@ts-ignore
             allGames[i] = allGames[i].nome_partida
         }
 

@@ -19,9 +19,12 @@ export default class DbController{
 
         allLeagues = await db('league').select('nome_liga');
         if(liga!=='Todas as ligas'){
-            // ISSO TA PRECISANDO DE COISA AINDA
+            let allLeaguesAux = await db('league')
+                .select('*')
+                .where('nome_liga', '=', liga as string);
+
             allTeams = await db('team').select('nome_time')
-                .where('id_liga','=',allLeagues[0].id_liga);
+                .where('liga_time','=',allLeaguesAux[0].id_liga);
 
             if(time!=='Todos os times'){
                 allPlayers = await db('player').select('nome_jogador')
@@ -33,7 +36,6 @@ export default class DbController{
                     .orWhere('time_casa','=',allTeams[0].id_time);
             }else{
                 allPlayers = await db('player').select('nome_jogador')
-                    // .join('league', {'league.id_liga': 'time.liga_time'});
 
                 allGames = await db('game').select('nome_partida');
             }
@@ -51,6 +53,18 @@ export default class DbController{
                 allPlayers = await db('player').select('nome_jogador');
                 allGames = await db('game').select('nome_partida');
             }
+        }
+        for(let i in allLeagues){
+            allLeagues[i] = allLeagues[i].nome_liga
+        }
+        for(let i in allTeams){
+            allTeams[i] = allTeams[i].nome_time
+        }
+        for(let i in allPlayers){
+            allPlayers[i] = allPlayers[i].nome_jogador
+        }
+        for(let i in allGames){
+            allGames[i] = allGames[i].nome_partida
         }
 
         return response.status(201).json({"erro": 0, ligas: allLeagues, times: allTeams, jogadores: allPlayers, jogos: allGames});

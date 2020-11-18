@@ -11,6 +11,51 @@ export default class DbController{
         return response.status(201).json({"hello": data});
     }
 
+    async getAllData(request: Request, response: Response){
+        const {liga,time,jogador,jogo} = request.query;
+        let allLeagues,allTeams,allPlayers,allGames;
+        
+        // http://localhost:3333/all?liga=Todas%20as%20ligas&time=Todos%20os%20times
+
+        allLeagues = await db('league').select('nome_liga');
+        if(liga!=='Todas as ligas'){
+            // ISSO TA PRECISANDO DE COISA AINDA
+            allTeams = await db('team').select('nome_time')
+                .where('id_liga','=',allLeagues[0].id_liga);
+
+            if(time!=='Todos os times'){
+                allPlayers = await db('player').select('nome_jogador')
+                    .join('league','league.id_liga','=', 'time.liga_time')
+                    .where('id_time','=',allTeams[0].id_time);
+
+                allGames = await db('game').select('nome_partida')
+                    .where('time_visitante','=',allTeams[0].id_time)
+                    .orWhere('time_casa','=',allTeams[0].id_time);
+            }else{
+                allPlayers = await db('player').select('nome_jogador')
+                    // .join('league', {'league.id_liga': 'time.liga_time'});
+
+                allGames = await db('game').select('nome_partida');
+            }
+        }else{
+            allTeams = await db('team').select('nome_time');
+
+            if(time!=='Todos os times'){
+                allPlayers = await db('player').select('nome_jogador')
+                    .where('id_time','=',allTeams[0].id_time);
+                    
+                allGames = await db('game').select('nome_partida')
+                    .where('time_visitante','=',allTeams[0].id_time)
+                    .orWhere('time_casa','=',allTeams[0].id_time);
+            }else{
+                allPlayers = await db('player').select('nome_jogador');
+                allGames = await db('game').select('nome_partida');
+            }
+        }
+
+        return response.status(201).json({"erro": 0, ligas: allLeagues, times: allTeams, jogadores: allPlayers, jogos: allGames});
+    }
+
     async getAllLeagues(request: Request, response: Response){
         const allLeagues = await db('league').select('nome_liga');
         let result = []

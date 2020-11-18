@@ -3,10 +3,15 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles'
 import React from 'react';
 import { options } from '../consts/consts';
 
+interface Props {
+  setFunction ?: any,
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       margin: 'auto',
+      display: 'flex',
     },
     paper: {
       width: 250,
@@ -27,7 +32,7 @@ function intersection(a: string[], b: string[]) {
   return a.filter((value) => b.indexOf(value) !== -1);
 }
 
-export default function TransferList() {
+export default function TransferList(props : Props) {
   const classes = useStyles();
   const [checked, setChecked] = React.useState<string []>([]);
   const [left, setLeft] = React.useState<string []>(options);
@@ -49,8 +54,12 @@ export default function TransferList() {
     setChecked(newChecked);
   };
 
+  React.useEffect(() => {
+    props.setFunction(right)
+  }, [right, props])
+
   const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
+    setRight(right.concat(leftChecked))
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
   };
@@ -89,7 +98,6 @@ export default function TransferList() {
 
   return (
     <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-
       <Grid item>{customList(left)}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">

@@ -1,72 +1,55 @@
 import React from 'react';
 import { FormGroup } from '@material-ui/core'
-import CheckOption from './components/CheckOption'
+import TransferList from './components/TransferList'
 import Selection from './components/Selection'
-import { options }from './consts/consts';
 import './App.css';
 
 export default function App() {
   const [ligas, setLigas] = React.useState([]);
+  const [ligaValue, setLigaValue] = React.useState("Todas as ligas");
+  const [timeValue, setTimeValue] = React.useState("Todos os times");
+  const [jogadorValue, setJogadorValue] = React.useState("");
+  const [jogoValue, setJogoValue] = React.useState("");
   const [jogadores, setJogadores] = React.useState([]);
   const [times, setTimes] = React.useState([]);
   const [jogos, setJogos] = React.useState([]);
 
   React.useEffect( () =>{
-    fetch('http://localhost:3333/ligas')
+    console.log(ligaValue + " " + timeValue)
+    fetch('http://localhost:3333/all?liga=' + ligaValue + '&time=' + timeValue)
     .then((response) => {
       return response.json()
     })
-    .then((ligasJSON) => {
-      ligasJSON.ligas.unshift('Todas as ligas')
-      setLigas(ligasJSON.ligas)
+    .then((jsonObj) => {
+      jsonObj.ligas.unshift('Todas as ligas')
+      setLigas(jsonObj.ligas)
+      jsonObj.times.unshift('Todos os times')
+      setTimes(jsonObj.times)
+      jsonObj.jogadores.unshift('Todos os jogadores')
+      setJogadores(jsonObj.jogadores)
+      jsonObj.jogos.unshift('Todos os jogos')
+      setJogos(jsonObj.jogos)
     })
-
-    fetch('http://localhost:3333/times')
-    .then((response) => {
-      return response.json()
-    })
-    .then((timesJSON) => {
-      timesJSON.times.unshift('Todos os times')
-      setTimes(timesJSON.times)
-    })
-
-    fetch('http://localhost:3333/jogadores')
-    .then((response) => {
-      return response.json()
-    })
-    .then((jogadoresJSON) => {
-      jogadoresJSON.jogadores.unshift('Todos os jogadores')
-      setJogadores(jogadoresJSON.jogadores)
-    })
-
-
-    fetch('http://localhost:3333/jogos')
-    .then((response) => {
-      return response.json()
-    })
-    .then((jogosJSON) => {
-      jogosJSON.jogos.unshift('Todos os jogos')
-      setJogos(jogosJSON.jogos)
-    })
-  }, [])
+  }, [ligaValue, timeValue])
 
   return (
     <div className="home-page">
 
       <div className="selections">
         <FormGroup>
-          <Selection typeData = "Ligas" data={ligas}/>
-          <Selection typeData = "Times" data={times}/>
-          <Selection typeData = "Jogadores" data={jogadores}/>
-          <Selection typeData = "Jogos" data={jogos}/>
+            <Selection setFunction = {setLigaValue} typeData = "Ligas" data={ligas}/>
+
+            <Selection setFunction = {setTimeValue} typeData = "Times" data={times}/>
+
+            <Selection setFunction = {setJogadorValue} typeData = "Jogadores" data={jogadores}/>
+
+            <Selection setFunction = {setJogoValue} typeData = "Jogos" data={jogos}/>
         </FormGroup>
       </div>
 
       <div className="checkboxes">
         <FormGroup>
-          {options.map((value) => {
-            return <CheckOption label={value}/>
-          })}
+          <TransferList/>
         </FormGroup>
       </div>
       

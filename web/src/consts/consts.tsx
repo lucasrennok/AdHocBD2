@@ -1,5 +1,5 @@
 
-export const options = [
+export const options : string [] = [
     'id_liga', 'nome_liga', 'nome_alternativo_liga', 'ano_formacao_liga', 'pais_liga', 'descricao', 
     'id_time', 'nome_time', 'ano_formacao_time', 'estadio_time', 'pais_time', 'liga_time',
      'id_jogador', 'id_time', 'nome_jogador', 'nacionalidade_jogador', 'data_nasc_jogador', 'genero_jogador', 'altura_jogador', 'peso_jogador',

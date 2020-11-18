@@ -16,10 +16,10 @@ export default class DbController{
         let allLeagues,allTeams,allPlayers,allGames;
         
         // http://localhost:3333/all?liga=Todas%20as%20ligas&time=Todos%20os%20times
-        if(liga===undefined){
+        if(liga === undefined || liga === ''){
             liga = "Todas as ligas";
         }
-        if(time===undefined){
+        if(time === undefined || time === ''){
             time = "Todos os times";
         }
 

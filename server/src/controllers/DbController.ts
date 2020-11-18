@@ -12,46 +12,52 @@ export default class DbController{
     }
 
     async getAllData(request: Request, response: Response){
-        const {liga,time,jogador,jogo} = request.query;
+        let {liga,time,jogador,jogo} = request.query;
         let allLeagues,allTeams,allPlayers,allGames;
         
         // http://localhost:3333/all?liga=Todas%20as%20ligas&time=Todos%20os%20times
+        if(liga===undefined){
+            liga = "Todas as ligas";
+        }
+        if(time===undefined){
+            time = "Todos os times";
+        }
 
-        allLeagues = await db('league').select('nome_liga');
+
+        allLeagues = await db('league').select('*');
         if(liga!=='Todas as ligas'){
             let allLeaguesAux = await db('league')
                 .select('*')
                 .where('nome_liga', '=', liga as string);
 
-            allTeams = await db('team').select('nome_time')
+            allTeams = await db('team').select('*')
                 .where('liga_time','=',allLeaguesAux[0].id_liga);
 
             if(time!=='Todos os times'){
-                allPlayers = await db('player').select('nome_jogador')
-                    .join('league','league.id_liga','=', 'time.liga_time')
+                allPlayers = await db('player').select('*')
                     .where('id_time','=',allTeams[0].id_time);
 
-                allGames = await db('game').select('nome_partida')
+                allGames = await db('game').select('*')
                     .where('time_visitante','=',allTeams[0].id_time)
                     .orWhere('time_casa','=',allTeams[0].id_time);
             }else{
-                allPlayers = await db('player').select('nome_jogador')
+                allPlayers = await db('player').select('*')
 
-                allGames = await db('game').select('nome_partida');
+                allGames = await db('game').select('*');
             }
         }else{
-            allTeams = await db('team').select('nome_time');
+            allTeams = await db('team').select('*');
 
             if(time!=='Todos os times'){
-                allPlayers = await db('player').select('nome_jogador')
+                allPlayers = await db('player').select('*')
                     .where('id_time','=',allTeams[0].id_time);
                     
-                allGames = await db('game').select('nome_partida')
+                allGames = await db('game').select('*')
                     .where('time_visitante','=',allTeams[0].id_time)
                     .orWhere('time_casa','=',allTeams[0].id_time);
             }else{
-                allPlayers = await db('player').select('nome_jogador');
-                allGames = await db('game').select('nome_partida');
+                allPlayers = await db('player').select('*');
+                allGames = await db('game').select('*');
             }
         }
         for(let i in allLeagues){

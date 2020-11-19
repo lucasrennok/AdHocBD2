@@ -1,11 +1,21 @@
 import React from 'react';
-import { FormGroup } from '@material-ui/core'
+import { FormGroup, Paper, Button } from '@material-ui/core'
+import {makeStyles, Theme, createStyles} from '@material-ui/core/styles'
 import Selection from './components/Selection'
 import Table from './components/Table'
 import TransferList from './components/TransferList'
 import './App.css';
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    button: {
+      padding: "2rem",
+    },
+  }),
+);
+
 export default function App() {
+  const classes = useStyles();
   const [ligas, setLigas] = React.useState([]);
   const [jogadores, setJogadores] = React.useState([]);
   const [times, setTimes] = React.useState([]);
@@ -18,7 +28,6 @@ export default function App() {
   const [selections, setSelections] = React.useState([]);
 
   React.useEffect( () =>{
-    console.log(selections)
     fetch('http://localhost:3333/all?liga=' + ligaValue + '&time=' + timeValue)
     .then((response) => {
       return response.json()
@@ -35,22 +44,62 @@ export default function App() {
     })
   }, [ligaValue, timeValue, selections])
 
+  function sendRequest(){
+    const jsonBody = {
+      liga: ligaValue,
+      time: timeValue,
+      jogador: jogadorValue,
+      jogo: jogoValue,
+      selections: JSON.stringify(selections)
+    }
+    let data = JSON.stringify(jsonBody);
+
+    fetch('http://localhost:3333/', {
+      method: "POST",
+      body: data,
+      headers: {                             
+        "Content-Type": "application/json"    
+      }
+    })
+    .then((jsonObj) => {
+      console.log(jsonObj);
+    })
+  }
+
   return (
     <div className="home-page">
       <div className="options">
         <div className="selections">
-          <FormGroup>
-              <Selection setFunction = {setLigaValue} typeData = "Ligas" data={ligas}/>
-              <Selection setFunction = {setTimeValue} typeData = "Times" data={times}/>
-              <Selection setFunction = {setJogadorValue} typeData = "Jogadores" data={jogadores}/>
-              <Selection setFunction = {setJogoValue} typeData = "Jogos" data={jogos}/>
+          <FormGroup className="teste">
+            <Paper elevation={5}>
+              <div className="containerSelection" id="top">
+                <Selection setFunction = {setLigaValue}     typeData = "Ligas"      data={ligas}/>
+              </div>
+
+              <div className="containerSelection">
+                <Selection setFunction = {setTimeValue}     typeData = "Times"      data={times}/>
+              </div>
+
+              <div className="containerSelection">
+                <Selection setFunction = {setJogadorValue}  typeData = "Jogadores"  data={jogadores}/>
+              </div>
+
+              <div className="containerSelection" id="bottom">
+                <Selection setFunction = {setJogoValue}     typeData = "Jogos"      data={jogos}/>
+              </div>
+            </Paper>
           </FormGroup>
         </div>
 
-        <div className="checkboxes">
-          <FormGroup>
-            <TransferList setFunction = {setSelections}/>
-          </FormGroup>
+        <div className="container">
+          <div className="checkboxes">
+            <FormGroup>
+              <Paper elevation={5}>
+                <TransferList setFunction = {setSelections}/>
+              </Paper>
+            </FormGroup>
+          </div>
+          <Button variant="contained" color="primary" onClick={sendRequest}>Gerar Relatório</Button>
         </div>
       </div>
       

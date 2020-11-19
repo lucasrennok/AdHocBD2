@@ -1,5 +1,7 @@
 import {Grid, List, ListItem, ListItemIcon, ListItemText, Checkbox, Button, Paper} from '@material-ui/core'
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles'
+import ArrowRightSharpIcon from '@material-ui/icons/ArrowRightSharp';
+import ArrowLeftSharpIcon from '@material-ui/icons/ArrowLeftSharp';
 import React from 'react';
 import { options } from '../consts/consts';
 
@@ -15,10 +17,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     paper: {
       width: 250,
-      height: 230,
+      height: 350,
       overflow: 'auto',
+      border: "1px solid #4254B5",
+      margin: "1rem"
     },
     button: {
+      border: "1px solid #4254B5",
+      backgroundColor: 'white',
       margin: theme.spacing(0.5, 0),
     },
   }),
@@ -107,16 +113,16 @@ export default function TransferList(props : Props) {
             className={classes.button}
             onClick={handleCheckedRight}
             disabled={leftChecked.length === 0}
-            aria-label="move selected right"
-          >&gt;</Button>
+            aria-label="move selected right">
+          <ArrowRightSharpIcon color="primary"/></Button>
           <Button
             variant="outlined"
             size="small"
             className={classes.button}
             onClick={handleCheckedLeft}
             disabled={rightChecked.length === 0}
-            aria-label="move selected left"
-          >&lt;</Button>
+            aria-label="move selected left">
+          <ArrowLeftSharpIcon color="primary"/></Button>
         </Grid>
       </Grid>
       <Grid item>{customList(right)}</Grid>

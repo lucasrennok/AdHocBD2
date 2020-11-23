@@ -1,21 +1,11 @@
 import React from 'react';
 import { FormGroup, Paper, Button } from '@material-ui/core'
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles'
 import Selection from './components/Selection'
-import Table from './components/Table'
 import TransferList from './components/TransferList'
+import Table from './components/Table'
 import './App.css';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    button: {
-      padding: "2rem",
-    },
-  }),
-);
-
 export default function App() {
-  const classes = useStyles();
   const [ligas, setLigas] = React.useState([]);
   const [jogadores, setJogadores] = React.useState([]);
   const [times, setTimes] = React.useState([]);
@@ -26,6 +16,7 @@ export default function App() {
   const [jogadorValue, setJogadorValue] = React.useState("");
   const [jogoValue, setJogoValue] = React.useState("");
   const [selections, setSelections] = React.useState([]);
+  const [table, setTable] = React.useState([]);
 
   React.useEffect( () =>{
     fetch('http://localhost:3333/all?liga=' + ligaValue + '&time=' + timeValue)
@@ -50,7 +41,7 @@ export default function App() {
       time: timeValue,
       jogador: jogadorValue,
       jogo: jogoValue,
-      selections: JSON.stringify(selections)
+      selections: selections
     }
     let data = JSON.stringify(jsonBody);
 
@@ -61,8 +52,11 @@ export default function App() {
         "Content-Type": "application/json"    
       }
     })
-    .then((jsonObj) => {
-      console.log(jsonObj);
+    .then((response) => {
+      return response.json();
+    })
+    .then((queryJSON) => {
+      setTable(queryJSON.return)
     })
   }
 
@@ -102,9 +96,11 @@ export default function App() {
           <Button variant="contained" color="primary" onClick={sendRequest}>Gerar Relatório</Button>
         </div>
       </div>
-      
+
       <div className="table">
-        <Table />
+        { table.length > 0 &&
+          <Table tableData = {table} keys ={selections}/>
+        }
       </div>
     </div>
   );

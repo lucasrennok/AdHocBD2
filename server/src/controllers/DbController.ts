@@ -1,14 +1,40 @@
 import {Request, Response} from 'express';
 import db from "../database/connections";
+import knex from 'knex';
+import { map } from '../consts'
 
 export default class DbController{
 
     async dbSearch(request: Request, response: Response){
-        const {table} = request.query;
+        const body = request.body;
+        let leagueSelections = <string []>([]), teamSelections = <string []>([]), playerSelections = <string []>([]), gameSelections = <string []>([]);
 
-        const data = await db('game').select('*');
+        body.selections.forEach((selection : string) => {
+            if(map.get('league').includes(selection)){
+                selection = "league." + selection
+                leagueSelections.push(selection)
+            }
+            if(map.get('team').includes(selection)){
+                selection = "team." + selection
+                teamSelections.push(selection)
+            }
+            if(map.get('player').includes(selection)){
+                selection = "player." + selection
+                playerSelections.push(selection)
+            }
+            if(map.get('game').includes(selection)){
+                selection = "game." + selection
+                gameSelections.push(selection)
+            }
+        })
+        
 
-        return response.status(201).json({"hello": data});
+        let query = await db('league').select(body.selections)
+        .fullOuterJoin('team', 'league.id_liga', 'team.liga_time')
+        .fullOuterJoin('player', 'team.id_time', 'player.id_time_jogador')
+        .fullOuterJoin('game', 'team.id_time', 'game.time_casa').distinct()
+    
+        return response.status(201).json({return: query});
     }
 
     async getAllData(request: Request, response: Response){
@@ -47,7 +73,7 @@ export default class DbController{
                     const id = team.id_time
                     //@ts-ignore
                     allPlayers = allPlayers.concat(await db('player').select('*')
-                        .where('id_time', '=', id as string))
+                        .where('id_time_jogador', '=', id as string))
                 }
 
                 allGames = []
@@ -81,7 +107,6 @@ export default class DbController{
         for(let i in allTeams){
             allTeams[i] = allTeams[i].nome_time
         }
-        console.log(allPlayers)
         for(let i in allPlayers){
             //@ts-ignore
             allPlayers[i] = allPlayers[i].nome_jogador

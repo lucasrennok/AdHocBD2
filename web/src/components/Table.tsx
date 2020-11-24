@@ -1,15 +1,12 @@
 import React from 'react';
 import MaterialTable from 'material-table'
 
-
-
 export default function Table(props : any) {
   let columns : any[] = [];
+  
   props.keys.forEach((key : any) => {
-    columns.push({title: key, field: key})
+    if (key in props.tableData[0]) columns.push({title: key, field: key})
   })
-
-
 
   return (
     <MaterialTable
@@ -17,7 +14,8 @@ export default function Table(props : any) {
       columns={columns}
       data={props.tableData}        
       options={{
-        exportButton: true
+        exportButton: true,
+        exportAllData: true
       }}
     />
   );

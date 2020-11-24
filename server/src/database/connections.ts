@@ -1,8 +1,8 @@
-import knex from 'knex';
 import dotenv from 'dotenv'
 import path from 'path';
 
 dotenv.config()
+//@ts-ignore
 dotenv.config({path: path.resolve})
 
 //Config to connect to the database
